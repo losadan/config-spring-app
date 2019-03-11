@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: config-spring-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-spring-app
+  template:
+    metadata:
+      labels:
+        app: config-spring-app
+    spec:
+      containers:
+        - name: config-spring-app
+          image: "noemilosada/config-spring-app:latest"
+          imagePullPolicy: "Never"
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/info
+              port: 8080
+            initialDelaySeconds: 20
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 2
